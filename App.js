@@ -22,6 +22,7 @@ import {useState, useEffect} from 'react';
 import {useColorScheme, Appearance} from 'react-native';
 import {createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
 
 export default function App() {
   const [complete, setComplete] = useState(false);
@@ -91,6 +92,8 @@ export default function App() {
 
       console.log(userData);
       console.log(userSetting);
+
+      SplashScreen.hide();
     } catch (error) {
       console.log(error);
     }
@@ -106,156 +109,152 @@ export default function App() {
     }
   };
 
-  LoadReg();
+  useEffect(() => {
+    LoadReg();
+  }, []);
 
-  if (complete === false) {
-    return (
-      <ColorSchemeContext.Provider value={colorScheme}>
-        <NavigationContainer
-          theme={{
-            colors:
-              colorScheme === 'light'
-                ? {background: '#ffffff'}
-                : {background: '#1f1d24'},
-          }}>
-          <Stack.Navigator initialRouteName="firstSplash">
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="firstSpalsh"
-              component={FirstSplash}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="Permission"
-              component={Permission}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="userRegisterName"
-              component={UserRegisterName}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="userRegisterNumber"
-              component={UserRegisterNumber}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="userRegisterAddress"
-              component={UserRegisterAddress}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="FirstRegisterSaver"
-              component={FirstRegisterSaver}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="CompleteRegister"
-              component={CompleteRegister}
-            />
-            <Stack.Screen
-              options={{headerShown: false, gestureEnabled: false}}
-              name="Home"
-              component={Home}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="Contact"
-              component={Contact}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="Setting"
-              component={Setting}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="SetAlarmMessage"
-              component={SetAlarmMessage}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="SetEmergencyAlarm"
-              component={SetEmergencyAlarm}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="RegisterSaver"
-              component={RegisterSaver}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="UserInfo"
-              component={UserInfo}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="ModifySaver"
-              component={ModifySaver}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ColorSchemeContext.Provider>
-    );
-  }
-
-  if (complete === true) {
-    return (
-      <ColorSchemeContext.Provider value={colorScheme}>
-        <NavigationContainer
-          theme={{
-            colors:
-              colorScheme === 'light'
-                ? {background: '#ffffff'}
-                : {background: '#1f1d24'},
-          }}>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen
-              options={{headerShown: false, gestureEnabled: false}}
-              name="Home"
-              component={Home}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="Contact"
-              component={Contact}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="Setting"
-              component={Setting}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="SetAlarmMessage"
-              component={SetAlarmMessage}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="SetEmergencyAlarm"
-              component={SetEmergencyAlarm}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="RegisterSaver"
-              component={RegisterSaver}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="UserInfo"
-              component={UserInfo}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name="ModifySaver"
-              component={ModifySaver}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ColorSchemeContext.Provider>
-    );
-  }
+  return complete ? (
+    <ColorSchemeContext.Provider value={colorScheme}>
+      <NavigationContainer
+        theme={{
+          colors:
+            colorScheme === 'light'
+              ? {background: '#ffffff'}
+              : {background: '#1f1d24'},
+        }}>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="Home"
+            component={Home}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Contact"
+            component={Contact}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Setting"
+            component={Setting}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="SetAlarmMessage"
+            component={SetAlarmMessage}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="SetEmergencyAlarm"
+            component={SetEmergencyAlarm}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="RegisterSaver"
+            component={RegisterSaver}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="UserInfo"
+            component={UserInfo}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ModifySaver"
+            component={ModifySaver}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ColorSchemeContext.Provider>
+  ) : (
+    <ColorSchemeContext.Provider value={colorScheme}>
+      <NavigationContainer
+        theme={{
+          colors:
+            colorScheme === 'light'
+              ? {background: '#ffffff'}
+              : {background: '#1f1d24'},
+        }}>
+        <Stack.Navigator initialRouteName="firstSplash">
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="firstSpalsh"
+            component={FirstSplash}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Permission"
+            component={Permission}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="userRegisterName"
+            component={UserRegisterName}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="userRegisterNumber"
+            component={UserRegisterNumber}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="userRegisterAddress"
+            component={UserRegisterAddress}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="FirstRegisterSaver"
+            component={FirstRegisterSaver}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="CompleteRegister"
+            component={CompleteRegister}
+          />
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="Home"
+            component={Home}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Contact"
+            component={Contact}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Setting"
+            component={Setting}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="SetAlarmMessage"
+            component={SetAlarmMessage}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="SetEmergencyAlarm"
+            component={SetEmergencyAlarm}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="RegisterSaver"
+            component={RegisterSaver}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="UserInfo"
+            component={UserInfo}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ModifySaver"
+            component={ModifySaver}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ColorSchemeContext.Provider>
+  );
 }
 
 export const ColorSchemeContext = createContext(null);
