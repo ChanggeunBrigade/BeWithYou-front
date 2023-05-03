@@ -13,7 +13,7 @@ import {
 import * as Font from 'expo-font';
 import {Ionicons} from '@expo/vector-icons';
 import {ColorSchemeContext} from '../App';
-import {useContext, useState, useEffect} from 'react';
+import {useContext, useState, useRef, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ModifySaver({navigation, route}) {
@@ -205,6 +205,11 @@ export default function ModifySaver({navigation, route}) {
             <TextInput
               onChangeText={onChangeName}
               value={name}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                this.passwordInput.focus();
+              }}
+              blurOnSubmit={false}
               style={
                 nameFocus
                   ? [
@@ -239,6 +244,9 @@ export default function ModifySaver({navigation, route}) {
               onChangeText={onChangeNumber}
               value={number}
               keyboardType="number-pad"
+              ref={input => {
+                this.passwordInput = input;
+              }}
               style={
                 numberFocus
                   ? [

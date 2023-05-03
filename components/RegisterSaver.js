@@ -170,6 +170,11 @@ export default function RegisterSaver({navigation}) {
             <TextInput
               onChangeText={onChangeName}
               value={name}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                this.passwordInput.focus();
+              }}
+              blurOnSubmit={false}
               style={
                 nameFocus
                   ? [
@@ -206,6 +211,9 @@ export default function RegisterSaver({navigation}) {
           <TextInput
             onChangeText={onChangeNumber}
             value={number}
+            ref={input => {
+              this.passwordInput = input;
+            }}
             keyboardType="number-pad"
             style={
               numberFocus

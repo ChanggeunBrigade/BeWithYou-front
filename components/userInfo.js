@@ -152,6 +152,11 @@ export default function UserInfo({navigation}) {
           </Text>
           <TextInput
             onChangeText={onChangeName}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              this.phNumInput.focus();
+            }}
+            blurOnSubmit={false}
             value={name}
             style={
               nameFocus
@@ -186,7 +191,15 @@ export default function UserInfo({navigation}) {
           <TextInput
             onChangeText={onChangeNumber}
             value={number}
+            ref={input => {
+              this.phNumInput = input;
+            }}
             keyboardType="number-pad"
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              this.addressInput.focus();
+            }}
+            blurOnSubmit={false}
             style={
               numberFocus
                 ? [
@@ -220,6 +233,9 @@ export default function UserInfo({navigation}) {
           <TextInput
             onChangeText={onChangeAddress}
             value={address}
+            ref={input => {
+              this.addressInput = input;
+            }}
             style={
               addressFocus
                 ? [
