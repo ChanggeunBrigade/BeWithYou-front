@@ -66,6 +66,7 @@ export default function UserInfo({navigation}) {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePress = () => {
     if (name.length > 0 && address.length > 0 && number.length >= 13) {
       setEnable(true);
@@ -90,7 +91,7 @@ export default function UserInfo({navigation}) {
       );
     }
     handlePress();
-  });
+  }, [number, handlePress]);
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),

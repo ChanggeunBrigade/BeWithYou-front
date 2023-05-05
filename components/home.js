@@ -55,7 +55,7 @@ export default function Home({navigation}) {
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       };
-    }, []),
+    }, [routesParams.name]),
   );
 
   const colorScheme = useContext(ColorSchemeContext);
@@ -341,13 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     letterSpacing: -1,
   },
-  lightMainText: {
-    color: '#343d4c',
-  },
-  darkMainText: {
-    color: '#ffffff',
-  },
-
   lightSubText: {
     color: '#343d4c',
   },

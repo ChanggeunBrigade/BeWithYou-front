@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  Appearance,
   Text,
   TextInput,
   ToastAndroid,
@@ -13,7 +12,7 @@ import {
 import * as Font from 'expo-font';
 import {Ionicons} from '@expo/vector-icons';
 import {ColorSchemeContext} from '../App';
-import {useContext, useState, useRef, useEffect} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ModifySaver({navigation, route}) {
@@ -76,6 +75,7 @@ export default function ModifySaver({navigation, route}) {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePress = () => {
     if (name.length >= 3 && number.length >= 13) {
       setEnable(true);
@@ -95,10 +95,11 @@ export default function ModifySaver({navigation, route}) {
       );
     }
     handlePress();
-  }, [number, name]);
+  }, [number, name, handlePress]);
 
   const contactReset = {};
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const LoadContact = async () => {
     try {
       const contactData = await AsyncStorage.getItem('contact');
@@ -115,7 +116,7 @@ export default function ModifySaver({navigation, route}) {
 
   useEffect(() => {
     LoadContact();
-  }, []);
+  }, [LoadContact]);
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -226,7 +227,8 @@ export default function ModifySaver({navigation, route}) {
                     ]
               }
               onFocus={() => setNameFocus(true)}
-              onBlur={() => setNameFocus(false)}></TextInput>
+              onBlur={() => setNameFocus(false)}
+            />
             <Text
               style={
                 numberFocus
@@ -263,7 +265,8 @@ export default function ModifySaver({navigation, route}) {
                     ]
               }
               onFocus={() => setNumberFocus(true)}
-              onBlur={() => setNumberFocus(false)}></TextInput>
+              onBlur={() => setNumberFocus(false)}
+            />
           </View>
           <View>
             {enable ? (

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import * as Font from 'expo-font';
 import {Ionicons} from '@expo/vector-icons';
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect, useContext, useCallback} from 'react';
 import StyledTextInput from './StyledTextInput';
 import {ColorSchemeContext} from '../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -49,18 +49,19 @@ export default function RegisterSaver({navigation}) {
     }
   };
 
-  const handlePress = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handlePress = useCallback(() => {
     if (name.length >= 3 && number.length >= 13) {
       setEnable(true);
     }
     if (number.length < 13 || name.length === 0) {
       setEnable(false);
     }
-  };
+  });
 
   useEffect(() => {
     handlePress();
-  }, [name, number]);
+  }, [handlePress, name, number]);
 
   useEffect(() => {
     if (number.length === 10) {
@@ -72,7 +73,7 @@ export default function RegisterSaver({navigation}) {
       );
     }
     handlePress();
-  }, [number, name]);
+  }, [number, name, handlePress]);
 
   const contactReset = {};
 
@@ -93,7 +94,7 @@ export default function RegisterSaver({navigation}) {
 
   useEffect(() => {
     LoadContact();
-  }, []);
+  }, [LoadContact]);
 
   const deleteContact = async () => {
     try {

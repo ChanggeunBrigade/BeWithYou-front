@@ -42,7 +42,7 @@ export default function UserRegisterName({navigation}) {
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       };
-    }, []),
+    }, [routesParams.name]),
   );
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function UserRegisterName({navigation}) {
         console.log('Data 로딩 성공');
       }
       if (!userData) {
-        userInfo.userInfo = userInfo.userInfo || {};
+        userData.userInfo = userData.userInfo || {};
       }
       userData.userInfo.name = name;
       // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.

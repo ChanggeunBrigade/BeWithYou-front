@@ -29,6 +29,7 @@ export default function Setting({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = async () => {
+        // eslint-disable-next-line no-undef
         if (routesParams.name === 'Contact') {
           const userInfoData = await AsyncStorage.getItem('userInfoData');
           let userData = JSON.parse(userInfoData);

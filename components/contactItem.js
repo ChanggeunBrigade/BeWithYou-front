@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+import {StatusBar} from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
@@ -7,13 +7,13 @@ import {
   Image,
   ScrollView,
   Appearance,
-} from "react-native";
-import * as Font from "expo-font";
-import { lightTheme } from "../color";
-import { Fontisto } from "@expo/vector-icons";
-import { ColorSchemeContext } from "../App";
-import { useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
+} from 'react-native';
+import * as Font from 'expo-font';
+import {lightTheme} from '../color';
+import {Fontisto} from '@expo/vector-icons';
+import {ColorSchemeContext} from '../App';
+import {useContext} from 'react';
+import {useNavigation} from '@react-navigation/native';
 
 export default function ContactItem(props) {
   const colorScheme = useContext(ColorSchemeContext);
@@ -21,11 +21,11 @@ export default function ContactItem(props) {
   const navigation = useNavigation();
 
   const [loaded] = Font.useFonts({
-    PretendardExtraBold: require("../assets/fonts/Pretendard-ExtraBold.ttf"),
-    PretendardSemiBold: require("../assets/fonts/Pretendard-SemiBold.ttf"),
-    PretendardRegular: require("../assets/fonts/Pretendard-Regular.ttf"),
-    PretendardMedium: require("../assets/fonts/Pretendard-Medium.ttf"),
-    PretendardBold: require("../assets/fonts/Pretendard-Bold.ttf"),
+    PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
+    PretendardSemiBold: require('../assets/fonts/Pretendard-SemiBold.ttf'),
+    PretendardRegular: require('../assets/fonts/Pretendard-Regular.ttf'),
+    PretendardMedium: require('../assets/fonts/Pretendard-Medium.ttf'),
+    PretendardBold: require('../assets/fonts/Pretendard-Bold.ttf'),
   });
 
   if (!loaded) {
@@ -35,58 +35,53 @@ export default function ContactItem(props) {
     <View
       style={[
         styles.container,
-        colorScheme === "dark" ? styles.darkContainer : styles.lightContainer,
-      ]}
-    >
+        colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer,
+      ]}>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ModifySaver", { id: props.id });
+          navigation.navigate('ModifySaver', {id: props.id});
         }}
         activeOpacity={0.7}
         style={[
           styles.section,
-          colorScheme === "dark" ? styles.darkBtn : styles.lightBtn,
-        ]}
-      >
-        {colorScheme === "dark" ? (
+          colorScheme === 'dark' ? styles.darkBtn : styles.lightBtn,
+        ]}>
+        {colorScheme === 'dark' ? (
           <Image
             style={styles.profileImage}
-            source={require("../assets/img/setting/profileDark.png")}
-          ></Image>
+            source={require('../assets/img/setting/profileDark.png')}
+          />
         ) : (
           <Image
             style={styles.profileImage}
-            source={require("../assets/img/setting/profile.png")}
-          ></Image>
+            source={require('../assets/img/setting/profile.png')}
+          />
         )}
 
         <View style={styles.profileName}>
           <Text
             style={[
-              { ...styles.boldText, marginLeft: 10 },
-              colorScheme === "dark"
+              {...styles.boldText, marginLeft: 10},
+              colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
-            ]}
-          >
+            ]}>
             {props.name}
           </Text>
           <Text
             style={[
-              { ...styles.subText, fontSize: 13, marginLeft: 10, marginTop: 3 },
-              colorScheme === "dark" ? styles.darkSubText : styles.lightSubText,
-            ]}
-          >
+              {...styles.subText, fontSize: 13, marginLeft: 10, marginTop: 3},
+              colorScheme === 'dark' ? styles.darkSubText : styles.lightSubText,
+            ]}>
             {props.phNum}
           </Text>
         </View>
 
         <Text
           style={[
-            { ...styles.Text, fontSize: 14, marginRight: 10 },
-            colorScheme === "dark" ? styles.darkSubText : styles.lightSubText,
-          ]}
-        >
+            {...styles.Text, fontSize: 14, marginRight: 10},
+            colorScheme === 'dark' ? styles.darkSubText : styles.lightSubText,
+          ]}>
           수정
         </Text>
 
@@ -94,7 +89,7 @@ export default function ContactItem(props) {
           name="angle-right"
           size={11}
           color="#9f9ea4"
-          styles={{ marginRight: 100, paddingTop: 100 }}
+          styles={{marginRight: 100, paddingTop: 100}}
         />
       </TouchableOpacity>
     </View>
@@ -103,9 +98,9 @@ export default function ContactItem(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "column",
+    flexDirection: 'column',
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   greySpace: {
     height: 25,
@@ -113,27 +108,27 @@ const styles = StyleSheet.create({
     backgroundColor: lightTheme.sectionBackground,
   },
   buttonTab: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingHorizontal: 20,
     marginVertical: 20,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
   header: {
-    backgroundColor: "fff",
+    backgroundColor: 'fff',
     paddingHorizontal: 20,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    flexDirection: "row",
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: 45,
     marginBottom: 20,
   },
   Profile: {
-    backgroundColor: "fff",
+    backgroundColor: 'fff',
     paddingHorizontal: 20,
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: 15,
     marginBottom: 10,
   },
@@ -141,7 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tinyButton: {
-    backgroundColor: "#f1f3f8",
+    backgroundColor: '#f1f3f8',
     borderRadius: 5,
     padding: 5,
     paddingHorizontal: 10,
@@ -150,34 +145,34 @@ const styles = StyleSheet.create({
   },
   section: {
     marginTop: 15,
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 8,
     paddingLeft: 10,
     paddingRight: 22,
     marginHorizontal: 25,
     borderRadius: 15,
-    backgroundColor: "#f1f3f8",
-    flexDirection: "row",
+    backgroundColor: '#f1f3f8',
+    flexDirection: 'row',
   },
   Text: {
-    fontFamily: "PretendardMedium",
+    fontFamily: 'PretendardMedium',
     fontSize: 23,
     letterSpacing: -0.4,
     marginLeft: 10,
-    color: "#6a7684",
+    color: '#6a7684',
   },
   boldText: {
-    fontFamily: "PretendardBold",
+    fontFamily: 'PretendardBold',
     fontSize: 17,
     letterSpacing: -0.4,
     paddingTop: 2,
     marginLeft: 5,
-    color: "#343d4c",
+    color: '#343d4c',
   },
   subText: {
-    fontFamily: "PretendardMedium",
+    fontFamily: 'PretendardMedium',
     fontSize: 10,
-    color: "#6a7684",
+    color: '#6a7684',
     letterSpacing: -0.2,
     paddingBottom: 2,
   },
@@ -187,33 +182,33 @@ const styles = StyleSheet.create({
   },
 
   lightContainer: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
   },
   darkContainer: {
-    backgroundColor: "#1f1d24",
+    backgroundColor: '#1f1d24',
   },
   lightSectionBg: {
-    backgroundColor: "#f4f4f4",
+    backgroundColor: '#f4f4f4',
   },
   darkSectionBg: {
-    backgroundColor: "#101012",
+    backgroundColor: '#101012',
   },
   lightBtn: {
-    backgroundColor: "#f1f3f8",
+    backgroundColor: '#f1f3f8',
   },
   darkBtn: {
-    backgroundColor: "#2f3035",
+    backgroundColor: '#2f3035',
   },
   lightMainText: {
-    color: "#343d4c",
+    color: '#343d4c',
   },
   darkMainText: {
-    color: "#ffffff",
+    color: '#ffffff',
   },
   lightSubText: {
-    color: "#9f9ea4",
+    color: '#9f9ea4',
   },
   darkSubText: {
-    color: "#c3c3c4",
+    color: '#c3c3c4',
   },
 });
