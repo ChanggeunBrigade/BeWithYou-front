@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  BackHandler,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {lightTheme} from '../color';
@@ -14,7 +13,6 @@ import ContactItem from './contactItem';
 import {ColorSchemeContext} from '../App';
 import {useContext, useEffect, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {useRoute} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 

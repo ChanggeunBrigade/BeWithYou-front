@@ -170,6 +170,11 @@ export default function FirstRegisterSaver({navigation}) {
             <TextInput
               onChangeText={onChangeName}
               value={name}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                this.passwordInput.focus();
+              }}
+              blurOnSubmit={false}
               style={
                 nameFocus
                   ? [
@@ -208,6 +213,9 @@ export default function FirstRegisterSaver({navigation}) {
             onChangeText={onChangeNumber}
             value={number}
             keyboardType="number-pad"
+            ref={input => {
+              this.passwordInput = input;
+            }}
             style={
               numberFocus
                 ? [
@@ -285,16 +293,18 @@ const styles = StyleSheet.create({
     fontSize: 21,
     borderBottomColor: '#0090ff',
     borderBottomWidth: 2,
-    height: 42,
+    paddingLeft: -5,
     marginHorizontal: 5,
+    paddingVertical: 7,
   },
   inputOnBlur: {
     fontFamily: 'PretendardRegular',
     fontSize: 21,
     borderBottomColor: '#b6b6c0',
     borderBottomWidth: 1,
-    height: 42,
+    paddingLeft: -5,
     marginHorizontal: 5,
+    paddingVertical: 7,
   },
   button: {
     height: 60,

@@ -6,14 +6,17 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {MaterialIcons} from '@expo/vector-icons';
 import {ColorSchemeContext} from '../App';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 
 export default function Permission({navigation}) {
   const colorScheme = useContext(ColorSchemeContext);
+  const [enable, setEnable] = useState(false);
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -27,9 +30,23 @@ export default function Permission({navigation}) {
     return null;
   }
 
+  const askPermission = async () => {
+    try {
+      const SMSResult = await request(PERMISSIONS.ANDROID.SEND_SMS);
+      const LocationResult = await request(
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      );
+      if (SMSResult === RESULTS.GRANTED && LocationResult === RESULTS.GRANTED) {
+        navigation.push('userRegisterName');
+      }
+    } catch (error) {
+      console.log('askPermission', error);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View
+      <ScrollView
         style={[
           styles.container,
           colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer,
@@ -170,7 +187,9 @@ export default function Permission({navigation}) {
 
         <View>
           <TouchableOpacity
-            onPress={() => navigation.push('userRegisterName')}
+            onPress={() => {
+              askPermission();
+            }}
             activeOpacity={0.8}
             style={styles.button}>
             <Text
@@ -183,7 +202,7 @@ export default function Permission({navigation}) {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 }

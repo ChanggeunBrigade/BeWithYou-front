@@ -207,6 +207,8 @@ const styles = StyleSheet.create({
     fontSize: 21,
     borderBottomColor: '#0090ff',
     borderBottomWidth: 2,
+    marginLeft: 2,
+    paddingLeft: -5,
     paddingVertical: 10,
   },
   inputOnBlur: {
@@ -214,6 +216,8 @@ const styles = StyleSheet.create({
     fontSize: 21,
     borderBottomColor: '#b6b6c0',
     borderBottomWidth: 1,
+    marginLeft: 2,
+    paddingLeft: -5,
     paddingVertical: 10,
   },
   button: {

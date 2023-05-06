@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   BackHandler,
-  Alert,
   ToastAndroid,
 } from 'react-native';
 import * as Font from 'expo-font';
@@ -14,10 +13,10 @@ import {lightTheme} from '../color';
 
 import {ColorSchemeContext} from '../App';
 import {useContext} from 'react';
-import {useEffect} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {useRoute} from '@react-navigation/native';
 import * as React from 'react';
+import SmsAndroid from 'react-native-get-sms-android';
 
 export default function Home({navigation}) {
   const routesParams = useRoute();
@@ -26,7 +25,7 @@ export default function Home({navigation}) {
     React.useCallback(() => {
       const onBackPress = () => {
         if (routesParams.name === 'Home') {
-          if (this.exitApp == undefined || !this.exitApp) {
+          if (this.exitApp === undefined || !this.exitApp) {
             ToastAndroid.show(
               '한번 더 누르시면 앱을 종료합니다.',
               ToastAndroid.SHORT,
@@ -72,6 +71,24 @@ export default function Home({navigation}) {
   if (!loaded) {
     return null;
   }
+
+  let phoneNumbers = {
+    addressList: ['01030891892'],
+  };
+
+  const sendSms = () => {
+    SmsAndroid.autoSend(
+      JSON.stringify(phoneNumbers),
+      'hello world message',
+      fail => {
+        console.log('Failed with this error: ' + fail);
+      },
+      success => {
+        ToastAndroid.show('메시지를 발송 완료하였어요.', ToastAndroid.SHORT);
+        console.log('SMS sent successfully');
+      },
+    );
+  };
 
   return (
     <View
@@ -121,7 +138,8 @@ export default function Home({navigation}) {
           </Text>
           <Image
             style={styles.tinyImage}
-            source={require('../assets/img/home/contact.png')}></Image>
+            source={require('../assets/img/home/contact.png')}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -145,7 +163,8 @@ export default function Home({navigation}) {
           </Text>
           <Image
             style={{...styles.tinyImage, marginTop: 32}}
-            source={require('../assets/img/home/contact_config.png')}></Image>
+            source={require('../assets/img/home/contact_config.png')}
+          />
         </TouchableOpacity>
       </View>
 
@@ -177,7 +196,8 @@ export default function Home({navigation}) {
           </Text>
           <Image
             style={styles.tinyImage}
-            source={require('../assets/img/home/update.png')}></Image>
+            source={require('../assets/img/home/update.png')}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -201,7 +221,8 @@ export default function Home({navigation}) {
           </Text>
           <Image
             style={styles.tinyImage}
-            source={require('../assets/img/home/setting.png')}></Image>
+            source={require('../assets/img/home/setting.png')}
+          />
         </TouchableOpacity>
       </View>
 
@@ -210,7 +231,10 @@ export default function Home({navigation}) {
           styles.section2,
           colorScheme === 'dark' ? styles.darkSectionBg : styles.lightSectionBg,
         ]}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.mainTestButton}>
+        <TouchableOpacity
+          onPress={sendSms}
+          activeOpacity={0.8}
+          style={styles.mainTestButton}>
           <Text style={{...styles.Text2}}>테스트 문자 발송</Text>
           <Text style={{...styles.subText2}}>
             대표 구호자 연락처로 테스트 문자를 발송합니다.
@@ -222,7 +246,8 @@ export default function Home({navigation}) {
         style={[
           styles.footer,
           colorScheme === 'dark' ? styles.darkSectionBg : styles.lightSectionBg,
-        ]}></View>
+        ]}
+      />
     </View>
   );
 }

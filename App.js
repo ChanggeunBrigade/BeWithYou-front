@@ -75,7 +75,7 @@ export default function App() {
       if (userData && userSetting) {
         console.log('Data 로딩 성공');
       }
-      isCompleteReg = userData.userInfo.completeRegister;
+      const isCompleteReg = userData.userInfo.completeRegister;
       // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.
 
       if (isCompleteReg) {

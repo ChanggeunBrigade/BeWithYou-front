@@ -1,13 +1,4 @@
-import {StatusBar} from 'expo-status-bar';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Appearance,
-} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import * as Font from 'expo-font';
 import {lightTheme} from '../color';
 import {Fontisto} from '@expo/vector-icons';
@@ -103,7 +94,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   greySpace: {
-    height: 25,
     paddingHorizontal: 20,
     backgroundColor: lightTheme.sectionBackground,
   },
@@ -146,7 +136,7 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 15,
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingLeft: 10,
     paddingRight: 22,
     marginHorizontal: 25,

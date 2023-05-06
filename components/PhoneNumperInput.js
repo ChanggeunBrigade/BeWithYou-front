@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Appearance,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {useState, useEffect} from 'react';

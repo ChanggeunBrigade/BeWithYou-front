@@ -244,14 +244,19 @@ export default function Setting({navigation}) {
 
         <View
           style={[
-            styles.buttonTab,
+            {...styles.buttonTab, marginVertical: -1},
             colorScheme === 'dark'
               ? styles.darkContainer
               : styles.lightContainer,
           ]}>
           <Text
             style={[
-              {...styles.Text, fontSize: 18, marginLeft: 5, paddingTop: 0},
+              {
+                ...styles.Text,
+                fontSize: 18,
+                marginLeft: 5,
+                paddingTop: 0,
+              },
               colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
@@ -263,7 +268,7 @@ export default function Setting({navigation}) {
             thumbColor={isEnabled ? '#0060ff' : '#f4f3f4'}
             onValueChange={toggleSwitch}
             value={isEnabled}
-            style={{paddingVertical: 0, marginVertical: -20, marginRight: -5}}
+            style={{paddingVertical: 0, marginVertical: 20, marginRight: -5}}
           />
         </View>
 

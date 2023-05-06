@@ -94,7 +94,7 @@ export default function RegisterSaver({navigation}) {
 
   useEffect(() => {
     LoadContact();
-  }, [LoadContact]);
+  }, []);
 
   const deleteContact = async () => {
     try {
@@ -293,18 +293,18 @@ const styles = StyleSheet.create({
     fontSize: 21,
     borderBottomColor: '#0090ff',
     borderBottomWidth: 2,
-    height: 43,
     paddingLeft: -5,
     marginHorizontal: 5,
+    paddingVertical: 7,
   },
   inputOnBlur: {
     fontFamily: 'PretendardRegular',
     fontSize: 21,
     borderBottomColor: '#b6b6c0',
     borderBottomWidth: 1,
-    height: 43,
     paddingLeft: -5,
     marginHorizontal: 5,
+    paddingVertical: 7,
   },
   button: {
     height: 60,

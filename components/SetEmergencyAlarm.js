@@ -149,10 +149,22 @@ export default function SetEmergencyAlarm({navigation}) {
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
-            style={colorScheme === 'dark' ? styles.darkBtn : styles.lightBtn}
+            style={
+              colorScheme === 'dark'
+                ? {
+                    ...styles.darkBtn,
+                    paddingVertical: 13,
+                    paddingHorizontal: 13,
+                  }
+                : {
+                    ...styles.lightBtn,
+                    paddingVertical: 13,
+                    paddingHorizontal: 13,
+                  }
+            }
             textStyle={{
               fontFamily: 'PretendardMedium',
-              fontSize: 19,
+              fontSize: 18,
               color: colorScheme === 'dark' ? '#ffffff' : '#343d4c',
               paddingBottom: 0,
             }}
