@@ -73,13 +73,13 @@ export default function Home({navigation}) {
   }
 
   let phoneNumbers = {
-    addressList: ['01030891892'],
+    addressList: ['01042018745'],
   };
 
   const sendSms = () => {
     SmsAndroid.autoSend(
       JSON.stringify(phoneNumbers),
-      'hello world message',
+      'Send a message for testing purposes. It should contain location information later.',
       fail => {
         console.log('Failed with this error: ' + fail);
       },
@@ -99,7 +99,9 @@ export default function Home({navigation}) {
       <StatusBar style="auto" />
 
       <View style={styles.header}>
-        <TouchableOpacity activeOpacity={0.8}>
+        <TouchableOpacity
+          onPress={() => navigation.push('EmergencyAlarm')}
+          activeOpacity={0.8}>
           <Text
             style={[
               styles.mainLogoText,

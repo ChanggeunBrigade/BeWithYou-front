@@ -23,6 +23,7 @@ import {useColorScheme, Appearance} from 'react-native';
 import {createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
+import EmergencyAlarm from './components/EmergencyAlarm';
 
 export default function App() {
   const [complete, setComplete] = useState(false);
@@ -129,6 +130,11 @@ export default function App() {
             component={Home}
           />
           <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="EmergencyAlarm"
+            component={EmergencyAlarm}
+          />
+          <Stack.Screen
             options={{headerShown: false}}
             name="Contact"
             component={Contact}
@@ -215,6 +221,11 @@ export default function App() {
             options={{headerShown: false, gestureEnabled: false}}
             name="Home"
             component={Home}
+          />
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="EmergencyAlarm"
+            component={EmergencyAlarm}
           />
           <Stack.Screen
             options={{headerShown: false}}
