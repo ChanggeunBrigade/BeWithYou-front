@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import * as Font from 'expo-font';
-import {MaterialIcons} from '@expo/vector-icons';
+import {MaterialIcons, Ionicons, FontAwesome} from '@expo/vector-icons';
 import {ColorSchemeContext} from '../App';
 import {useContext, useState} from 'react';
 import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
@@ -36,7 +36,15 @@ export default function Permission({navigation}) {
       const LocationResult = await request(
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
-      if (SMSResult === RESULTS.GRANTED && LocationResult === RESULTS.GRANTED) {
+      const MicResult = await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
+      const NotificationResult = await request(
+        PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
+      );
+      if (
+        MicResult === RESULTS.GRANTED &&
+        SMSResult === RESULTS.GRANTED &&
+        LocationResult === RESULTS.GRANTED
+      ) {
         navigation.push('userRegisterName');
       }
     } catch (error) {
@@ -87,7 +95,7 @@ export default function Permission({navigation}) {
           <View style={styles.permissionIcon}>
             <MaterialIcons name="message" size={30} color={'#ffffff'} />
           </View>
-          <View style={{flexShrink: 1, marginRight: 40}}>
+          <View style={{flexShrink: 1, marginRight: 30}}>
             <Text
               style={[
                 {
@@ -111,8 +119,76 @@ export default function Permission({navigation}) {
                   ? styles.darkSubText
                   : styles.lightSubText,
               ]}>
-              일정시간 휴대전화의 사용이 없을 시 저장된 긴급 구호자에게로 문자를
-              보내기 위해 요구되는 권한이에요.
+              긴급상황 발생 시 저장된 긴급 구호자에게로 문자를 보내기 위해
+              요구되는 권한이에요.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.section2}>
+          <View style={styles.permissionIcon}>
+            <FontAwesome name="microphone" size={30} color={'#ffffff'} />
+          </View>
+          <View style={{flexShrink: 1, marginRight: 30}}>
+            <Text
+              style={[
+                {
+                  ...styles.semiBoldText,
+                  fontSize: 18,
+                  marginBottom: 5,
+                },
+                colorScheme === 'dark'
+                  ? styles.darkSubText
+                  : styles.lightSubText,
+              ]}>
+              음성 인식
+            </Text>
+            <Text
+              style={[
+                {
+                  ...styles.Text,
+                  fontSize: 12,
+                },
+                colorScheme === 'dark'
+                  ? styles.darkSubText
+                  : styles.lightSubText,
+              ]}>
+              긴급알람 발생 시 목소리로도 알람을 취소할 수 있도록 하기 위해서
+              필요한 권한이에요.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.section2}>
+          <View style={styles.permissionIcon}>
+            <Ionicons name="notifications" size={30} color={'#ffffff'} />
+          </View>
+          <View style={{flexShrink: 1, marginRight: 30}}>
+            <Text
+              style={[
+                {
+                  ...styles.semiBoldText,
+                  fontSize: 18,
+                  marginBottom: 5,
+                },
+                colorScheme === 'dark'
+                  ? styles.darkSubText
+                  : styles.lightSubText,
+              ]}>
+              알람 허용
+            </Text>
+            <Text
+              style={[
+                {
+                  ...styles.Text,
+                  fontSize: 12,
+                },
+                colorScheme === 'dark'
+                  ? styles.darkSubText
+                  : styles.lightSubText,
+              ]}>
+              긴급상황 발생 시 긴급알람을 스마트폰에 전달하기 위해 요구되는
+              권한이에요.
             </Text>
           </View>
         </View>

@@ -6,18 +6,32 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import * as Font from 'expo-font';
-import {useContext} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {ColorSchemeContext} from '../App';
 import Svg, {Path, LinearGradient, Stop, Defs} from 'react-native-svg';
-import {useCountdown} from 'react-native-countdown-circle-timer';
+import {
+  CountdownCircleTimer,
+  useCountdown,
+} from 'react-native-countdown-circle-timer';
 import * as React from 'react';
+
+import SmsAndroid from 'react-native-get-sms-android';
+import Geolocation from 'react-native-geolocation-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EmergencyAlarm({navigation}) {
   const colorScheme = useContext(ColorSchemeContext);
 
-  const duration = 60;
+  const [text, setText] = useState('');
+  const [number, setNumber] = useState('');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [location, setLocation] = useState('');
+
+  const duration = 10;
 
   const {
     path,
@@ -28,7 +42,69 @@ export default function EmergencyAlarm({navigation}) {
     elapsedTime,
     size,
     strokeWidth,
-  } = useCountdown({isPlaying: true, duration, colors: 'url(#your-unique-id)'});
+  } = useCountdown({
+    isPlaying: true,
+    duration,
+    colors: 'url(#your-unique-id)',
+  });
+
+  const getLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setLocation(position);
+        console.log(position.coords.latitude);
+        console.log(position.coords.longitude);
+      },
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  const LoadUser = async () => {
+    try {
+      const userInfoData = await AsyncStorage.getItem('userInfoData');
+      let userData = JSON.parse(userInfoData);
+
+      const userSettingData = await AsyncStorage.getItem('userSettingData');
+      let userSetting = JSON.parse(userSettingData);
+
+      setText(userSetting.emergencyMessage);
+      setName(userData.userInfo.name);
+      setNumber(userData.userInfo.phNum);
+      setAddress(userData.userInfo.Address);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+    LoadUser();
+  }, []);
+
+  let phoneNumbers = {
+    addressList: ['01042018745'],
+  };
+
+  const sendSms = () => {
+    SmsAndroid.autoSend(
+      JSON.stringify(phoneNumbers),
+      '[함께할게.]\n\n' +
+        text +
+        `\n\n현재 ${name} 님의 위치입니다. \n` +
+        `https://www.google.com/maps/place/${location.coords.latitude},${location.coords.longitude}`,
+      fail => {
+        console.log('Failed with this error: ' + fail);
+      },
+      success => {
+        ToastAndroid.show('메시지를 발송 완료하였어요.', ToastAndroid.SHORT);
+        console.log('SMS sent successfully');
+      },
+    );
+  };
 
   const [loaded] = Font.useFonts({
     Malang: require('../assets/fonts/MalangmalangB.ttf'),
@@ -60,42 +136,31 @@ export default function EmergencyAlarm({navigation}) {
               position: 'relative',
               marginTop: 120,
             }}>
-            <Svg width={size} height={size}>
-              <Defs>
-                <LinearGradient id="your-unique-id" x1="1" y1="0" x2="0" y2="0">
-                  <Stop offset="0%" stopColor="#eb4828" />
-                  <Stop offset="100%" stopColor="#eb4828" />
-                </LinearGradient>
-              </Defs>
-              <Path
-                d={path}
-                fill="none"
-                stroke={colorScheme === 'dark' ? '#2c2c34' : '#f1f3f8'}
-                strokeWidth={strokeWidth}
-              />
-              {elapsedTime !== duration && (
-                <Path
-                  d={path}
-                  fill="none"
-                  stroke={stroke}
-                  strokeLinecap="butt"
-                  strokeWidth={strokeWidth}
-                  strokeDasharray={pathLength}
-                  strokeDashoffset={strokeDashoffset}
-                />
+            <CountdownCircleTimer
+              onComplete={() => {
+                sendSms();
+                ToastAndroid.show(
+                  '비상메시지를 구호자에게 송신했어요.',
+                  ToastAndroid.SHORT,
+                );
+              }}
+              isPlaying
+              duration={60}
+              trailColor={colorScheme === 'dark' ? '#2c2c34' : '#f1f3f8'}
+              colors={['#0090ff', '#F7B801', '#A30000', '#A30000']}
+              colorsTime={[60, 30, 10, 0]}>
+              {({remainingTime, color}) => (
+                <Text
+                  style={[
+                    {...styles.boldText, fontSize: 55},
+                    colorScheme === 'dark'
+                      ? styles.darkMainText
+                      : styles.lightMainText,
+                  ]}>
+                  {remainingTime}
+                </Text>
               )}
-            </Svg>
-            <View style={styles.time}>
-              <Text
-                style={[
-                  {...styles.boldText, fontSize: 55},
-                  colorScheme === 'dark'
-                    ? styles.darkMainText
-                    : styles.lightMainText,
-                ]}>
-                {remainingTime}
-              </Text>
-            </View>
+            </CountdownCircleTimer>
           </View>
         </View>
 
@@ -154,7 +219,7 @@ export default function EmergencyAlarm({navigation}) {
         <View style={styles.section}>
           <TouchableOpacity
             onPress={() => {
-              navigation.pop();
+              navigation.navigate('Home');
             }}
             activeOpacity={0.8}
             style={{...styles.button}}>

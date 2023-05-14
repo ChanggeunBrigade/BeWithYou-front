@@ -30,6 +30,7 @@ export default function ModifySaver({navigation, route}) {
     try {
       const contactData = await AsyncStorage.getItem('contact');
       let contact = JSON.parse(contactData);
+      console.log(route.params.id);
       setName(contact[route.params.id].SaverName);
       setNumber(contact[route.params.id].phNum);
     } catch (error) {

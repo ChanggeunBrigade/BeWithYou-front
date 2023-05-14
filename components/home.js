@@ -12,17 +12,27 @@ import * as Font from 'expo-font';
 import {lightTheme} from '../color';
 
 import {ColorSchemeContext} from '../App';
-import {useContext} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {useRoute} from '@react-navigation/native';
 import * as React from 'react';
 import SmsAndroid from 'react-native-get-sms-android';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation from 'react-native-geolocation-service';
+import {useEvent} from 'react-native-reanimated';
 
 export default function Home({navigation}) {
   const routesParams = useRoute();
+  const [text, setText] = useState('');
+  const [number, setNumber] = useState('');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [location, setLocation] = useState('');
 
   useFocusEffect(
     React.useCallback(() => {
+      LoadUser();
+      getLocation();
       const onBackPress = () => {
         if (routesParams.name === 'Home') {
           if (this.exitApp === undefined || !this.exitApp) {
@@ -54,8 +64,38 @@ export default function Home({navigation}) {
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', onBackPress);
       };
-    }, [routesParams.name]),
+    }, [routesParams.name, text, name, number, address]),
   );
+
+  const getLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setLocation(position);
+      },
+      error => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  const LoadUser = async () => {
+    try {
+      const userInfoData = await AsyncStorage.getItem('userInfoData');
+      let userData = JSON.parse(userInfoData);
+
+      const userSettingData = await AsyncStorage.getItem('userSettingData');
+      let userSetting = JSON.parse(userSettingData);
+
+      setText(userSetting.emergencyMessage);
+      setName(userData.userInfo.name);
+      setNumber(userData.userInfo.phNum);
+      setAddress(userData.userInfo.Address);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const colorScheme = useContext(ColorSchemeContext);
 
@@ -79,7 +119,10 @@ export default function Home({navigation}) {
   const sendSms = () => {
     SmsAndroid.autoSend(
       JSON.stringify(phoneNumbers),
-      'Send a message for testing purposes. It should contain location information later.',
+      '[함께할게 테스트메시지]\n\n' +
+        text +
+        `\n\n현재 ${name} 님의 위치입니다. \n` +
+        `https://www.google.com/maps/place/${location.coords.latitude},${location.coords.longitude}`,
       fail => {
         console.log('Failed with this error: ' + fail);
       },

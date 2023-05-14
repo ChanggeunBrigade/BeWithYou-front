@@ -24,6 +24,16 @@ export default function SetAlarmMessage({navigation}) {
 
   const onChangeText = payload => setText(payload);
 
+  const setTextInput = async () => {
+    try {
+      const userSettingData = await AsyncStorage.getItem('userSettingData');
+      let userSetting = JSON.parse(userSettingData);
+      setText(userSetting.emergencyMessage);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (text.length >= 3) {
       setEnable(true);
@@ -31,6 +41,10 @@ export default function SetAlarmMessage({navigation}) {
       setEnable(false);
     }
   }, [text]);
+
+  useEffect(() => {
+    setTextInput();
+  }, []);
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -149,28 +163,27 @@ export default function SetAlarmMessage({navigation}) {
             onFocus={() => setFocus(true)}
             onBlur={() => setFocus(false)}
           />
+          {enable ? (
+            <TouchableOpacity
+              onPress={() => {
+                ModifySetting();
+                navigation.pop();
+              }}
+              activeOpacity={0.8}
+              style={{...styles.button, marginHorizontal: 0, marginTop: 50}}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontFamily: 'PretendardMedium',
+                  fontSize: 18,
+                }}>
+                설정 완료
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            ''
+          )}
         </View>
-
-        {enable ? (
-          <TouchableOpacity
-            onPress={() => {
-              ModifySetting();
-              navigation.pop();
-            }}
-            activeOpacity={0.8}
-            style={{...styles.button}}>
-            <Text
-              style={{
-                color: '#fff',
-                fontFamily: 'PretendardMedium',
-                fontSize: 18,
-              }}>
-              설정 완료
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          ''
-        )}
       </View>
     </TouchableWithoutFeedback>
   );

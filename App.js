@@ -53,7 +53,7 @@ export default function App() {
   const settingReset = {
     emergencyAlarmTime: 12,
     emergencyMessage:
-      '<긴급메시지 발송> 현재 userName이 일정시간 이상 움직이지 않았어요! 위험상황이니 신속하게 119 등에 연락을 취해주세요.',
+      '위험상황 발생! 함께할게.에서 송신하는 긴급메시지입니다. 신속하게 신고해주세요.',
     doNotDisturb: false,
   };
 
