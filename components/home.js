@@ -7,18 +7,20 @@ import {
   Image,
   BackHandler,
   ToastAndroid,
+  AppRegistry,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {lightTheme} from '../color';
 
 import {ColorSchemeContext} from '../App';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState, useRef} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {useRoute} from '@react-navigation/native';
 import * as React from 'react';
 import SmsAndroid from 'react-native-get-sms-android';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from 'react-native-geolocation-service';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {useEvent} from 'react-native-reanimated';
 
 export default function Home({navigation}) {
@@ -28,6 +30,7 @@ export default function Home({navigation}) {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState('');
+  const removeNotifeeEvent = useRef();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -80,6 +83,32 @@ export default function Home({navigation}) {
     );
   };
 
+  async function PushNotification() {
+    // 알림 채널 생성(안드로이드 전용)
+    const channelId = await notifee.createChannel({
+      id: 'emergency-alarm',
+      name: 'Emergency Notifications',
+      importance: AndroidImportance.HIGH,
+    });
+
+    // 알림 표시
+    await notifee.displayNotification({
+      title: '긴급 상황이 발생했어요!',
+      body: '괜찮으신가요? 60초 이후에 긴급메시지가 발송됩니다.',
+      android: {
+        channelId,
+        showChronometer: true,
+        chronometerDirection: 'down',
+        timestamp: Date.now() + 60000, // 5 minutes
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'emergency-alarm',
+          mainComponent: 'emergency-alarm-noti',
+        },
+      },
+    });
+  }
+
   const LoadUser = async () => {
     try {
       const userInfoData = await AsyncStorage.getItem('userInfoData');
@@ -96,6 +125,22 @@ export default function Home({navigation}) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const onNotifeeEvent = async ({type, detail}) => {
+      if (type === EventType.PRESS) {
+        // 'press' 이벤트 발생 시 EmergencyAlarm으로 이동
+        if (detail.pressAction.id === 'emergency-alarm') {
+          navigation.push('EmergencyAlarm');
+        }
+        if (detail.pressAction.id === 'emergency-alarm-noti') {
+          navigation.push('EmergencyAlarm');
+        }
+      }
+    };
+    notifee.onBackgroundEvent(onNotifeeEvent);
+    notifee.onForegroundEvent(onNotifeeEvent);
+  }, [navigation]);
 
   const colorScheme = useContext(ColorSchemeContext);
 
@@ -222,6 +267,7 @@ export default function Home({navigation}) {
           activeOpacity={0.6}
           onPress={() => {
             ToastAndroid.show('현재 앱은 최신 버전입니다.', ToastAndroid.SHORT);
+            PushNotification();
           }}
           style={[
             styles.mainButton,

@@ -10,6 +10,7 @@ import {
   ToastAndroid,
   AppRegistry,
   Appearance,
+  BackHandler,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {useNavigation} from '@react-navigation/native';
@@ -21,6 +22,7 @@ import {
   useCountdown,
 } from 'react-native-countdown-circle-timer';
 import * as React from 'react';
+import RNExitApp from 'react-native-exit-app';
 
 import SmsAndroid from 'react-native-get-sms-android';
 import Geolocation from 'react-native-geolocation-service';
@@ -28,7 +30,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import Home from './home';
 
-export default function EmergencyAlarm({navigation}) {
+export default function EmergencyAlarmNoti({navigation}) {
   const [colorScheme, setColorScheme] = useState(useColorScheme());
 
   useEffect(() => {
@@ -246,7 +248,8 @@ export default function EmergencyAlarm({navigation}) {
           <View style={styles.section}>
             <TouchableOpacity
               onPress={() => {
-                navigation.pop();
+                // BackHandler.exitApp();
+                RNExitApp.exitApp();
               }}
               activeOpacity={0.8}
               style={{...styles.button}}>
@@ -265,6 +268,8 @@ export default function EmergencyAlarm({navigation}) {
     </ColorSchemeContext.Provider>
   );
 }
+
+AppRegistry.registerComponent('emergency-alarm-noti', () => EmergencyAlarmNoti);
 
 const styles = StyleSheet.create({
   container: {

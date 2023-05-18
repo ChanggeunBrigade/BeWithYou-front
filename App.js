@@ -9,6 +9,7 @@ import UserInfo from './components/userInfo';
 
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
+import useLinking from '@react-navigation/native/src/useLinking';
 import {createStackNavigator} from '@react-navigation/stack';
 import CompleteRegister from './components/completeRegister';
 import FirstSplash from './components/firstSplash';
@@ -18,18 +19,34 @@ import SetEmergencyAlarm from './components/SetEmergencyAlarm';
 import ModifySaver from './components/modifySaver';
 import FirstRegisterSaver from './components/firstRegisterSaver';
 
-import {useState, useEffect} from 'react';
-import {useColorScheme, Appearance} from 'react-native';
+import {useState, useEffect, useRef} from 'react';
+import {useColorScheme, Appearance, AppState, AppRegistry} from 'react-native';
 import {createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import EmergencyAlarm from './components/EmergencyAlarm';
+import EmergencyAlarmNoti from './components/EmergencyAlarmNoti';
 
 export default function App() {
   const [complete, setComplete] = useState(false);
   const Stack = createStackNavigator();
-
   const [colorScheme, setColorScheme] = useState(useColorScheme());
+  const ref = useRef();
+  const {getInitialState} = useLinking(ref, {
+    prefixes: [],
+    config: {
+      Main: {
+        path: 'main',
+      },
+      EmergencyAlarm: {
+        path: 'emergency-alarm',
+      },
+    },
+  });
+
+  const [isReady, setIsReady] = useState(false);
+  const [initialState, setInitialState] = useState();
 
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({colorScheme}) => {
@@ -114,9 +131,39 @@ export default function App() {
     LoadReg();
   }, []);
 
+  useEffect(() => {
+    AppState.addEventListener('change', async newState => {
+      if (newState === 'active') {
+        const event = (await notifee.getInitialNotification()) || {};
+        const {type, detail} = event;
+
+        if (type === EventType.PRESS) {
+          // 원하는 컴포넌트로 이동하려면 여기에 해당 로직을 작성
+          if (detail.pressAction.id === 'emergency-alarm') {
+            setInitialState({routes: [{name: 'EmergencyAlarm'}]});
+          }
+        }
+      }
+    });
+
+    getInitialState().then(state => {
+      if (state !== undefined) {
+        setInitialState(state);
+      }
+
+      setIsReady(true);
+    });
+  }, [getInitialState]);
+
+  if (!isReady) {
+    return null;
+  }
+
   return complete ? (
     <ColorSchemeContext.Provider value={colorScheme}>
       <NavigationContainer
+        ref={ref}
+        initialState={initialState}
         theme={{
           colors:
             colorScheme === 'light'
@@ -133,6 +180,11 @@ export default function App() {
             options={{headerShown: false, gestureEnabled: false}}
             name="EmergencyAlarm"
             component={EmergencyAlarm}
+          />
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="EmergencyAlarmNoti"
+            component={EmergencyAlarmNoti}
           />
           <Stack.Screen
             options={{headerShown: false}}
@@ -226,6 +278,11 @@ export default function App() {
             options={{headerShown: false, gestureEnabled: false}}
             name="EmergencyAlarm"
             component={EmergencyAlarm}
+          />
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
+            name="EmergencyAlarmNoti"
+            component={EmergencyAlarmNoti}
           />
           <Stack.Screen
             options={{headerShown: false}}
