@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Appearance,
   Text,
   TextInput,
   ToastAndroid,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {Ionicons} from '@expo/vector-icons';
+import StyledTextInput from './StyledTextInput';
+import PhoneNumberInput from './PhoneNumperInput';
 import {ColorSchemeContext} from '../App';
 import {useContext, useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,7 +33,6 @@ export default function ModifySaver({navigation, route}) {
     try {
       const contactData = await AsyncStorage.getItem('contact');
       let contact = JSON.parse(contactData);
-      console.log(route.params.id);
       setName(contact[route.params.id].SaverName);
       setNumber(contact[route.params.id].phNum);
     } catch (error) {
@@ -60,23 +62,27 @@ export default function ModifySaver({navigation, route}) {
     try {
       const contactData = await AsyncStorage.getItem('contact');
       let contact = contactData ? JSON.parse(contactData) : {};
-      let length = route.params.id;
+      const deletedContactId = route.params.id;
 
-      delete contact[route.params.id];
+      delete contact[deletedContactId];
 
-      while (length <= Object.keys(contact)) {
-        Object.keys(contact).slice(0)[length] = length - 1;
-        length++;
-      }
+      const updatedContact = {};
 
-      await AsyncStorage.setItem('contact', JSON.stringify(contact));
+      Object.keys(contact).forEach((key, index) => {
+        if (key < deletedContactId) {
+          updatedContact[key] = contact[key];
+        } else if (key > deletedContactId) {
+          updatedContact[key - 1] = contact[key];
+        }
+      });
+
+      await AsyncStorage.setItem('contact', JSON.stringify(updatedContact));
       console.log('연락처 삭제 완료');
     } catch (error) {
       console.log(error);
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handlePress = () => {
     if (name.length >= 3 && number.length >= 13) {
       setEnable(true);
@@ -96,11 +102,10 @@ export default function ModifySaver({navigation, route}) {
       );
     }
     handlePress();
-  }, [number, name, handlePress]);
+  }, [number, name]);
 
   const contactReset = {};
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const LoadContact = async () => {
     try {
       const contactData = await AsyncStorage.getItem('contact');
@@ -117,7 +122,7 @@ export default function ModifySaver({navigation, route}) {
 
   useEffect(() => {
     LoadContact();
-  }, [LoadContact]);
+  }, []);
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -156,6 +161,7 @@ export default function ModifySaver({navigation, route}) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+              deleteSaver();
               navigation.pop();
             }}
             style={{
@@ -207,11 +213,6 @@ export default function ModifySaver({navigation, route}) {
             <TextInput
               onChangeText={onChangeName}
               value={name}
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                this.passwordInput.focus();
-              }}
-              blurOnSubmit={false}
               style={
                 nameFocus
                   ? [
@@ -247,9 +248,6 @@ export default function ModifySaver({navigation, route}) {
               onChangeText={onChangeNumber}
               value={number}
               keyboardType="number-pad"
-              ref={input => {
-                this.passwordInput = input;
-              }}
               style={
                 numberFocus
                   ? [
@@ -309,7 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    padding: 18,
+    height: 60,
     marginBottom: 20,
     backgroundColor: '#3182f7',
     borderRadius: 15,

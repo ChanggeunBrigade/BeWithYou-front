@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from 'react-native-geolocation-service';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {useEvent} from 'react-native-reanimated';
+import MQTT from 'sp-react-native-mqtt';
 
 export default function Home({navigation}) {
   const routesParams = useRoute();
@@ -83,11 +84,42 @@ export default function Home({navigation}) {
     );
   };
 
+  MQTT.createClient({
+    uri: 'mqtt://osm-oracle.kro.kr:7001',
+    clientId: 'skuBeWithYou',
+    user: 'chang',
+  })
+    .then(function (client) {
+      client.on('closed', function () {
+        console.log('mqtt.event.closed');
+      });
+
+      client.on('error', function (msg) {
+        console.log('mqtt.event.error', msg);
+      });
+
+      client.on('message', function (msg) {
+        console.log('mqtt.event.message', msg);
+        PushNotification();
+      });
+
+      client.on('connect', function () {
+        console.log('connected');
+        client.subscribe('alert', 2);
+      });
+
+      client.connect();
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+
   async function PushNotification() {
     // 알림 채널 생성(안드로이드 전용)
     const channelId = await notifee.createChannel({
       id: 'emergency-alarm',
       name: 'Emergency Notifications',
+      sound: 'siren',
       importance: AndroidImportance.HIGH,
     });
 
@@ -97,6 +129,7 @@ export default function Home({navigation}) {
       body: '괜찮으신가요? 60초 이후에 긴급메시지가 발송됩니다.',
       android: {
         channelId,
+        sound: 'siren',
         showChronometer: true,
         chronometerDirection: 'down',
         timestamp: Date.now() + 60000, // 5 minutes

@@ -20,10 +20,12 @@ import ModifySaver from './components/modifySaver';
 import FirstRegisterSaver from './components/firstRegisterSaver';
 
 import {useState, useEffect, useRef} from 'react';
-import {useColorScheme, Appearance, AppState, AppRegistry} from 'react-native';
+import {useColorScheme, Appearance, AppState, Platform} from 'react-native';
 import {createContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
+import BackgroundService from 'react-native-background-actions';
+import MQTT from 'sp-react-native-mqtt';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import EmergencyAlarm from './components/EmergencyAlarm';
 import EmergencyAlarmNoti from './components/EmergencyAlarmNoti';
@@ -57,6 +59,36 @@ export default function App() {
       subscription.remove();
     };
   }, []);
+
+
+
+  async function PushNotification() {
+    // 알림 채널 생성(안드로이드 전용)
+    const channelId = await notifee.createChannel({
+      id: 'emergency-alarm',
+      name: 'Emergency Notifications',
+      sound: 'siren',
+      importance: AndroidImportance.HIGH,
+    });
+
+    // 알림 표시
+    await notifee.displayNotification({
+      title: '긴급 상황이 발생했어요!',
+      body: '괜찮으신가요? 60초 이후에 긴급메시지가 발송됩니다.',
+      android: {
+        channelId,
+        sound: 'siren',
+        showChronometer: true,
+        chronometerDirection: 'down',
+        timestamp: Date.now() + 60000, // 5 minutes
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'emergency-alarm',
+          mainComponent: 'emergency-alarm-noti',
+        },
+      },
+    });
+  }
 
   const userReset = {
     userInfo: {

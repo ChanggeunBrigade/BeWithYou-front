@@ -81,7 +81,7 @@ export default function Permission({navigation}) {
               {
                 ...styles.boldText,
                 fontSize: 23,
-                marginBottom: 20,
+                marginBottom: 5,
               },
               colorScheme === 'dark'
                 ? styles.darkMainText

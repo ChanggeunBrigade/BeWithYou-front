@@ -135,6 +135,18 @@ export default function Contact({navigation}) {
           <View />
         ),
       )}
+      <Text
+        style={[
+          {
+            ...styles.subText,
+            fontSize: 13,
+            marginLeft: 5,
+            marginRight: 10,
+            lineHeight: 20,
+          },
+          colorScheme === 'dark' ? styles.darkSubText : styles.lightSubText,
+        ]}
+      />
     </ScrollView>
   );
 }

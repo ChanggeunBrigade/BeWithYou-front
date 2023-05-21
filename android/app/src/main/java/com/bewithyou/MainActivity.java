@@ -2,6 +2,10 @@ package com.bewithyou;
 import expo.modules.ReactActivityDelegateWrapper;
 
 import android.os.Bundle;
+import android.content.Intent;
+
+import android.content.Context;
+import com.facebook.react.HeadlessJsTaskService;
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;
 import com.facebook.react.ReactActivityDelegate;
@@ -26,6 +30,11 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
       SplashScreen.show(this); // 추가
       super.onCreate(savedInstanceState);
+
+      Context context = getApplicationContext();
+      Intent intent = new Intent(this, MyTaskService.class);
+      context.startService(intent);
+      HeadlessJsTaskService.acquireWakeLockNow(context);
   }
 
   /**

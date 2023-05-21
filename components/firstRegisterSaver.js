@@ -75,7 +75,6 @@ export default function FirstRegisterSaver({navigation}) {
 
   const contactReset = {};
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const LoadContact = async () => {
     try {
       const contactData = await AsyncStorage.getItem('contact');
@@ -151,7 +150,16 @@ export default function FirstRegisterSaver({navigation}) {
                 ? styles.darkMainText
                 : styles.lightMainText,
             ]}>
-            구호자를 등록해주세요
+            최소 1명의 구호자가 필요해요
+          </Text>
+          <Text
+            style={[
+              {...styles.boldText, fontSize: 23},
+              colorScheme === 'dark'
+                ? styles.darkMainText
+                : styles.lightMainText,
+            ]}>
+            구호자 정보를 입력해주세요
           </Text>
           <View>
             <Text
@@ -347,7 +355,7 @@ const styles = StyleSheet.create({
     fontFamily: 'PretendardBold',
     fontSize: 17,
     letterSpacing: -0.4,
-    paddingTop: 2,
+    paddingTop: 5,
     marginLeft: 5,
     color: '#343d4c',
   },
