@@ -16,7 +16,6 @@ import * as Font from 'expo-font';
 import {useNavigation} from '@react-navigation/native';
 import {useContext, useEffect, useState} from 'react';
 import {ColorSchemeContext} from '../App';
-import Svg, {Path, LinearGradient, Stop, Defs} from 'react-native-svg';
 import {
   CountdownCircleTimer,
   useCountdown,

@@ -60,8 +60,6 @@ export default function App() {
     };
   }, []);
 
-
-
   async function PushNotification() {
     // 알림 채널 생성(안드로이드 전용)
     const channelId = await notifee.createChannel({

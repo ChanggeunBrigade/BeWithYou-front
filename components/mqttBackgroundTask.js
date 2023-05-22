@@ -21,7 +21,7 @@ const mqttBackgroundTask = async () => {
     client.on('message', async function (msg) {
       console.log('mqtt.event.message', msg);
       const channelId = await notifee.createChannel({
-        id: 'emergency-alarm',
+        id: 'sound',
         name: 'Emergency Notifications',
         sound: 'siren',
         importance: AndroidImportance.HIGH,
