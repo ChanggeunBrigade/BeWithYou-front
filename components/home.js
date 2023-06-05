@@ -7,10 +7,12 @@ import {
   Image,
   BackHandler,
   ToastAndroid,
+  ScrollView,
   AppRegistry,
 } from 'react-native';
 import * as Font from 'expo-font';
 import {lightTheme} from '../color';
+import Person from './animations/person';
 
 import {ColorSchemeContext} from '../App';
 import {useContext, useEffect, useState, useRef} from 'react';
@@ -31,8 +33,11 @@ export default function Home({navigation}) {
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState('');
   const removeNotifeeEvent = useRef();
+
   const timeoutRef = useRef(null);
   const [phNum, setPhNum] = useState([]);
+  const intervalRef = useRef(null);
+  let elapsedTime = 0;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -139,6 +144,10 @@ export default function Home({navigation}) {
     });
 
   async function PushNotification() {
+    intervalRef.current = setInterval(() => {
+      elapsedTime += 1;
+    }, 1000);
+    
     // 알림 채널 생성(안드로이드 전용)
     const channelId = await notifee.createChannel({
       id: 'sound',
@@ -167,8 +176,7 @@ export default function Home({navigation}) {
 
     timeoutRef.current = setTimeout(() => {
       sendSms();
-
-    }, 60000);
+    }, 10000);
   }
 
   const LoadUser = async () => {
@@ -194,11 +202,13 @@ export default function Home({navigation}) {
         // 'press' 이벤트 발생 시 EmergencyAlarm으로 이동
         if (detail.pressAction.id === 'emergency-alarm') {
           clearTimeout(timeoutRef.current);
-          navigation.push('EmergencyAlarm');
+          clearInterval(intervalRef.current);
+          navigation.push('EmergencyAlarm', { elapsedTime: elapsedTime });
         }
         if (detail.pressAction.id === 'emergency-alarm-noti') {
           clearTimeout(timeoutRef.current);
-          navigation.push('EmergencyAlarm');
+          clearInterval(intervalRef.current); 
+          navigation.push('EmergencyAlarm', { elapsedTime: elapsedTime });
         }
       }
     };
@@ -221,14 +231,17 @@ export default function Home({navigation}) {
     return null;
   }
 
-  let phoneNumbers = {
-    addressList: phNum,
-  };
+  const sendSms = async () => {
 
-  const sendSms = () => {
+    let phoneNumbers = {
+      "addressList": phNum,
+    };
+
+    console.log(JSON.stringify(phoneNumbers));
+
     SmsAndroid.autoSend(
       JSON.stringify(phoneNumbers),
-      '[함께할게 테스트메시지]\n\n' +
+      '[함께할게.]\n\n' +
         text +
         `\n\n현재 ${name} 님의 위치입니다. \n` +
         `https://www.google.com/maps/place/${location.coords.latitude},${location.coords.longitude}`,
@@ -238,12 +251,12 @@ export default function Home({navigation}) {
       success => {
         ToastAndroid.show('메시지를 발송 완료하였어요.', ToastAndroid.SHORT);
         console.log('SMS sent successfully');
-      },
+      }
     );
   };
 
   return (
-    <View
+    <ScrollView
       style={[
         styles.container,
         colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer,
@@ -252,7 +265,7 @@ export default function Home({navigation}) {
 
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.push('EmergencyAlarm')}
+          onPress={() => navigation.push('EmergencyAlarm', { elapsedTime: elapsedTime })}
           activeOpacity={0.8}>
           <Text
             style={[
@@ -265,6 +278,42 @@ export default function Home({navigation}) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <View
+        style={[
+          styles.section2,
+          colorScheme === 'dark' ? styles.darkSectionBg : styles.lightSectionBg,
+        ]}>
+        <View
+          style={styles.mainHeader}>
+          <Text style={[
+              styles.Text,
+              colorScheme === 'dark'
+                ? styles.darkMainText
+                : styles.lightMainText,
+            ]}>안녕하세요, {name}님!</Text>
+          <Text style={[
+              styles.subText2,
+              colorScheme === 'dark'
+                ? styles.darkSubText
+                : styles.lightSubText,
+            ]}>
+            오늘도 함께해요!
+          </Text>
+        </View>
+        <View style={{
+          flexDirection: 'row', 
+          alignItems: 'center',
+          marginRight: 60, 
+          paddingBottom: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginLeft: 0
+          }}>
+            <Person />
+        </View>
+      </View>
+
 
       <View
         style={[
@@ -403,7 +452,7 @@ export default function Home({navigation}) {
           colorScheme === 'dark' ? styles.darkSectionBg : styles.lightSectionBg,
         ]}
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -440,9 +489,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   footer: {
-    paddingTop: 20,
     flex: 6.5,
     paddingHorizontal: 20,
+    paddingTop: 250,
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
@@ -473,9 +522,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginHorizontal: 10,
     padding: 22,
-    paddingTop: 20,
     fontFamily: 'PretendardSemiBold',
     backgroundColor: '#5081F3',
+    flex: 2,
+    justifyContent: 'center',
+  },
+
+  mainHeader: {
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    fontFamily: 'PretendardSemiBold',
     flex: 2,
     justifyContent: 'center',
   },

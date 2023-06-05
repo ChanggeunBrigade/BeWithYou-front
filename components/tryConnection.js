@@ -10,14 +10,15 @@ import {
 } from 'react-native';
 import * as Font from 'expo-font';
 import {ColorSchemeContext} from '../App';
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
-import Checked from './animations/checked';
+import WaitConnect from './animations/waitConnect';
 import * as React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MQTT from 'sp-react-native-mqtt';
 
-export default function CompleteRegister({navigation}) {
+export default function TryConnection({navigation}) {
   const colorScheme = useContext(ColorSchemeContext);
   const routesParams = useRoute();
   let isCompleteReg = false;
@@ -25,12 +26,47 @@ export default function CompleteRegister({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (routesParams.name === 'completeRegister') {
+        if (routesParams.name === 'TryConnection') {
           return true;
         } else {
           return false;
         }
       };
+
+      MQTT.createClient({
+        uri: 'mqtt://osm-oracle.kro.kr:7001',
+        clientId: 'skuBeWithYou',
+        user: 'chang',
+      })
+        .then(function (client) {
+          client.on('closed', function () {
+            console.log('mqtt.event.closed');
+          });
+    
+          client.on('error', function (msg) {
+            console.log('mqtt.event.error', msg);
+          });
+    
+          client.on('message', function (msg) {
+            console.log('mqtt.event.message', msg);
+          });
+    
+          client.on('connect', function () {
+            setTimeout(() => {
+              navigation.push('ConnectSuccess');
+            }, 5000);
+            console.log('connected');
+            client.subscribe('alert', 2);
+          });
+    
+          client.connect();
+        })
+        .catch(function (err) {
+          setTimeout(() => {
+            navigation.push('ConnectFail');
+          }, 5000);
+          console.log(err);
+        });
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
@@ -39,25 +75,6 @@ export default function CompleteRegister({navigation}) {
       };
     }, [routesParams.name]),
   );
-
-  const completeReg = async () => {
-    try {
-      const userInfoData = await AsyncStorage.getItem('userInfoData');
-      // AsyncStorage에서 'userInfoData' 키로 저장된 값을 가져옵니다.
-      let userData = userInfoData ? JSON.parse(userInfoData) : {};
-      // 가져온 데이터를 JSON.parse를 통해 객체로 변환합니다. 데이터가 없으면 빈 객체를 생성합니다.
-      if (userData) {
-        console.log('Data 로딩 성공');
-      }
-      userData.userInfo.completeRegister = isCompleteReg;
-      // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.
-      await AsyncStorage.setItem('userInfoData', JSON.stringify(userData));
-      // userInfo 객체를 JSON.stringify를 사용하여 문자열로 변환하고, 'userInfoData' 키로 AsyncStorage에 저장합니다.
-      console.log(userData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -81,15 +98,15 @@ export default function CompleteRegister({navigation}) {
         <StatusBar style="auto" />
 
         <View style={{...styles.section2, marginTop: 100}}>
-          <Checked />
+          <WaitConnect/>
           <Text
             style={[
-              {...styles.boldText, fontSize: 23, marginBottom: 5},
+              {...styles.boldText, fontSize: 23, marginBottom: 5, marginTop: 50},
               colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
             ]}>
-            입력해주신 정보가
+            기기와 연결하는 중이에요
           </Text>
           <Text
             style={[
@@ -98,28 +115,15 @@ export default function CompleteRegister({navigation}) {
                 ? styles.darkMainText
                 : styles.lightMainText,
             ]}>
-            정상적으로 등록되었어요
+            잠시만 기다려주세요
           </Text>
-        </View>
-        <View style={styles.section}>
-          <TouchableOpacity
-            onPress={() => {
-              isCompleteReg = true;
-              completeReg();
-              navigation.popToTop();
-              navigation.push('TryConnection');
-            }}
-            activeOpacity={0.8}
-            style={{...styles.button}}>
-            <Text
-              style={{
-                color: '#fff',
-                fontFamily: 'PretendardMedium',
-                fontSize: 18,
-              }}>
-              확인
-            </Text>
-          </TouchableOpacity>
+          <Text
+            style={[
+              {...styles.subText, fontSize: 15, marginTop: 15},
+              colorScheme === 'dark' ? styles.darkSubText : styles.lightSubText,
+            ]}>
+            조금 시간이 걸릴 수 있어요
+          </Text>
         </View>
       </View>
     </TouchableWithoutFeedback>

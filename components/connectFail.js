@@ -10,14 +10,15 @@ import {
 } from 'react-native';
 import * as Font from 'expo-font';
 import {ColorSchemeContext} from '../App';
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect} from 'react';
 import {useRoute} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
 import Checked from './animations/checked';
+import Error from './animations/error';
 import * as React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CompleteRegister({navigation}) {
+export default function ConnectFail({navigation}) {
   const colorScheme = useContext(ColorSchemeContext);
   const routesParams = useRoute();
   let isCompleteReg = false;
@@ -25,7 +26,7 @@ export default function CompleteRegister({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (routesParams.name === 'completeRegister') {
+        if (routesParams.name === 'ConnectFail') {
           return true;
         } else {
           return false;
@@ -39,25 +40,6 @@ export default function CompleteRegister({navigation}) {
       };
     }, [routesParams.name]),
   );
-
-  const completeReg = async () => {
-    try {
-      const userInfoData = await AsyncStorage.getItem('userInfoData');
-      // AsyncStorage에서 'userInfoData' 키로 저장된 값을 가져옵니다.
-      let userData = userInfoData ? JSON.parse(userInfoData) : {};
-      // 가져온 데이터를 JSON.parse를 통해 객체로 변환합니다. 데이터가 없으면 빈 객체를 생성합니다.
-      if (userData) {
-        console.log('Data 로딩 성공');
-      }
-      userData.userInfo.completeRegister = isCompleteReg;
-      // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.
-      await AsyncStorage.setItem('userInfoData', JSON.stringify(userData));
-      // userInfo 객체를 JSON.stringify를 사용하여 문자열로 변환하고, 'userInfoData' 키로 AsyncStorage에 저장합니다.
-      console.log(userData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const [loaded] = Font.useFonts({
     PretendardExtraBold: require('../assets/fonts/Pretendard-ExtraBold.ttf'),
@@ -81,33 +63,28 @@ export default function CompleteRegister({navigation}) {
         <StatusBar style="auto" />
 
         <View style={{...styles.section2, marginTop: 100}}>
-          <Checked />
+          <Error />
           <Text
             style={[
-              {...styles.boldText, fontSize: 23, marginBottom: 5},
+              {...styles.boldText, fontSize: 23, marginBottom: 5, marginTop: 50},
               colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
             ]}>
-            입력해주신 정보가
+            연결에 실패했어요
           </Text>
           <Text
             style={[
-              {...styles.boldText, fontSize: 23},
-              colorScheme === 'dark'
-                ? styles.darkMainText
-                : styles.lightMainText,
+              {...styles.subText, fontSize: 15, marginTop: 5},
+              colorScheme === 'dark' ? styles.darkSubText : styles.lightSubText,
             ]}>
-            정상적으로 등록되었어요
+            연결 상태를 다시 확인해보세요
           </Text>
         </View>
         <View style={styles.section}>
           <TouchableOpacity
             onPress={() => {
-              isCompleteReg = true;
-              completeReg();
               navigation.popToTop();
-              navigation.push('TryConnection');
             }}
             activeOpacity={0.8}
             style={{...styles.button}}>
@@ -117,7 +94,7 @@ export default function CompleteRegister({navigation}) {
                 fontFamily: 'PretendardMedium',
                 fontSize: 18,
               }}>
-              확인
+              다시 시도
             </Text>
           </TouchableOpacity>
         </View>

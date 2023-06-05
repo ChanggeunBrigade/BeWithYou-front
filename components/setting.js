@@ -201,7 +201,7 @@ export default function Setting({navigation}) {
           ]}>
           <Text
             style={[
-              {...styles.Text, fontSize: 18, marginLeft: 5, paddingTop: 0},
+              {...styles.Text, fontSize: 17, marginLeft: 5, paddingTop: 0},
               colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
@@ -227,7 +227,7 @@ export default function Setting({navigation}) {
           ]}>
           <Text
             style={[
-              {...styles.Text, fontSize: 18, marginLeft: 5, paddingTop: 0},
+              {...styles.Text, fontSize: 17, marginLeft: 5, paddingTop: 0},
               colorScheme === 'dark'
                 ? styles.darkMainText
                 : styles.lightMainText,
@@ -253,7 +253,7 @@ export default function Setting({navigation}) {
             style={[
               {
                 ...styles.Text,
-                fontSize: 18,
+                fontSize: 17,
                 marginLeft: 5,
                 paddingTop: 0,
               },

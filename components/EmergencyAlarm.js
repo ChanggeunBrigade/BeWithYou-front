@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Animated,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
@@ -13,7 +14,7 @@ import {
 } from 'react-native';
 import * as Font from 'expo-font';
 import {useNavigation} from '@react-navigation/native';
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState, useRef} from 'react';
 import {ColorSchemeContext} from '../App';
 import Svg, {Path, LinearGradient, Stop, Defs} from 'react-native-svg';
 import {
@@ -27,9 +28,36 @@ import Geolocation from 'react-native-geolocation-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import Home from './home';
+import Wave from './animations/wave';
 
-export default function EmergencyAlarm({navigation}) {
+export default function EmergencyAlarm({navigation, route}) {
   const [colorScheme, setColorScheme] = useState(useColorScheme());
+  const [backgroundColorAnim] = useState(new Animated.Value(0));
+  const containerRef = useRef(null);
+
+  const [phNum, setPhNum] = useState([]);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const twinkleFirst = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const twinkleLater = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  let elapsedTimes = route.params;
+
+  // console.log(elapsedTimes.elapsedTime);
 
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({colorScheme}) => {
@@ -98,13 +126,36 @@ export default function EmergencyAlarm({navigation}) {
     }
   };
 
+  const LoadContact = async () => {
+    try {
+      const contactData = await AsyncStorage.getItem('contact');
+      let contact = contactData ? JSON.parse(contactData) : {};
+      // 가져온 데이터를 JSON.parse를 통해 객체로 변환합니다. 데이터가 없으면 빈 객체를 생성합니다.
+      if (Object.keys(contact).length === 0) {
+        contact = contactReset;
+      }
+      console.log(contact);
+      // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.
+
+      // phNum만 포함된 새로운 배열을 만듭니다.
+      const phoneNumber = Object.values(contact).map((item) => item.phNum);
+      setPhNum(phoneNumber);
+
+      console.log(phNum);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getLocation();
     LoadUser();
+    LoadContact();
   }, []);
 
   let phoneNumbers = {
-    addressList: ['01042018745'],
+    addressList: phNum,
   };
 
   const sendSms = () => {
@@ -140,16 +191,15 @@ export default function EmergencyAlarm({navigation}) {
   return (
     <ColorSchemeContext.Provider value={colorScheme}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View
-          style={[
+      <Animated.View style={[
             styles.container,
             colorScheme === 'dark'
               ? styles.darkContainer
-              : styles.lightContainer,
+              : styles.lightContainer
           ]}>
           <StatusBar style="auto" />
-
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            
             <View
               style={{
                 width: size,
@@ -166,7 +216,7 @@ export default function EmergencyAlarm({navigation}) {
                   );
                 }}
                 isPlaying
-                duration={60}
+                duration={57}
                 trailColor={colorScheme === 'dark' ? '#2c2c34' : '#f1f3f8'}
                 colors={['#0090ff', '#F7B801', '#A30000', '#A30000']}
                 colorsTime={[60, 30, 10, 0]}>
@@ -260,7 +310,7 @@ export default function EmergencyAlarm({navigation}) {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </TouchableWithoutFeedback>
     </ColorSchemeContext.Provider>
   );
@@ -270,7 +320,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: '#fff',
   },
   time: {
     display: 'flex',
@@ -384,6 +433,9 @@ const styles = StyleSheet.create({
   },
   darkContainer: {
     backgroundColor: '#1f1d24',
+  },
+  redcontainer: {
+    backgroundColor: 'ff0000',
   },
   lightSectionBg: {
     backgroundColor: '#f4f4f4',

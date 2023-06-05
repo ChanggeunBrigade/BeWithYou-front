@@ -18,6 +18,9 @@ import SetAlarmMessage from './components/SetAlarmMessage';
 import SetEmergencyAlarm from './components/SetEmergencyAlarm';
 import ModifySaver from './components/modifySaver';
 import FirstRegisterSaver from './components/firstRegisterSaver';
+import TryConnection from './components/tryConnection';
+import ConnectFail from './components/connectFail';
+import ConnectSuccess from './components/connectSuccess';
 
 import {useState, useEffect, useRef} from 'react';
 import {useColorScheme, Appearance, AppState, Platform} from 'react-native';
@@ -29,6 +32,7 @@ import MQTT from 'sp-react-native-mqtt';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import EmergencyAlarm from './components/EmergencyAlarm';
 import EmergencyAlarmNoti from './components/EmergencyAlarmNoti';
+
 
 export default function App() {
   const [complete, setComplete] = useState(false);
@@ -203,6 +207,21 @@ export default function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             options={{headerShown: false, gestureEnabled: false}}
+            name="TryConnection"
+            component={TryConnection}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ConnectSuccess"
+            component={ConnectSuccess}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ConnectFail"
+            component={ConnectFail}
+          />
+          <Stack.Screen
+            options={{headerShown: false, gestureEnabled: false}}
             name="Home"
             component={Home}
           />
@@ -298,6 +317,21 @@ export default function App() {
             options={{headerShown: false}}
             name="CompleteRegister"
             component={CompleteRegister}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="TryConnection"
+            component={TryConnection}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ConnectFail"
+            component={ConnectFail}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="ConnectSuccess"
+            component={ConnectSuccess}
           />
           <Stack.Screen
             options={{headerShown: false, gestureEnabled: false}}

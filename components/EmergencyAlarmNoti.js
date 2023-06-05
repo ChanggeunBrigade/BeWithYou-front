@@ -29,8 +29,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import Home from './home';
 
-export default function EmergencyAlarmNoti({navigation}) {
+export default function EmergencyAlarmNoti({navigation, route}) {
   const [colorScheme, setColorScheme] = useState(useColorScheme());
+
+  const [phNum, setPhNum] = useState([]);
+
+  let elapsedTimes = route.params;
+
+  console.log(elapsedTimes.elapsedTime);
 
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({colorScheme}) => {
@@ -99,13 +105,36 @@ export default function EmergencyAlarmNoti({navigation}) {
     }
   };
 
+  const LoadContact = async () => {
+    try {
+      const contactData = await AsyncStorage.getItem('contact');
+      let contact = contactData ? JSON.parse(contactData) : {};
+      // 가져온 데이터를 JSON.parse를 통해 객체로 변환합니다. 데이터가 없으면 빈 객체를 생성합니다.
+      if (Object.keys(contact).length === 0) {
+        contact = contactReset;
+      }
+      console.log(contact);
+      // userInfo 객체 안에 있는 name 속성에 name 상태 변수 값을 저장합니다.
+
+      // phNum만 포함된 새로운 배열을 만듭니다.
+      const phoneNumber = Object.values(contact).map((item) => item.phNum);
+      setPhNum(phoneNumber);
+
+      console.log(phNum);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getLocation();
     LoadUser();
+    LoadContact();
   }, []);
 
   let phoneNumbers = {
-    addressList: ['01042018745'],
+    addressList: phNum,
   };
 
   const sendSms = () => {
